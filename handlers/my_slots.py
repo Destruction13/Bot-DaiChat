@@ -84,8 +84,9 @@ async def my_slot_selected(callback: CallbackQuery, state: FSMContext) -> None:
 async def delete_my_slot(callback: CallbackQuery, state: FSMContext) -> None:
     _, bc, date, time = callback.data.split(":", 3)
     remove_slot(bc, date, time)
-    await callback.message.edit_text(
-        escape_md("Слот удален"), reply_markup=MAIN_MENU
+    await callback.message.edit_text(escape_md("Слот удален"))
+    await callback.message.answer(
+        escape_md("Выберите действие:"), reply_markup=MAIN_MENU
     )
     await state.clear()
     await callback.answer()
