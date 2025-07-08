@@ -7,6 +7,7 @@ from keyboards.common import business_centers_kb, slots_kb, slot_actions_kb, MAI
 from states.view_slots import ViewSlots
 from storage.database import get_slots, remove_slot
 from utils.calendar import get_ru_calendar
+from utils import escape_md
 
 router = Router()
 
@@ -15,7 +16,8 @@ router = Router()
 async def start_view(message: Message, state: FSMContext) -> None:
     await state.set_state(ViewSlots.choose_bc)
     await message.answer(
-        "Выберите бизнес-центр:", reply_markup=business_centers_kb("viewbc")
+        escape_md("Выберите бизнес-центр:"),
+        reply_markup=business_centers_kb("viewbc"),
     )
 
 
@@ -25,7 +27,9 @@ async def view_bc_chosen(callback: CallbackQuery, state: FSMContext) -> None:
     await state.update_data(bc=bc)
     cal = get_ru_calendar()
     markup = await cal.start_calendar()
-    await callback.message.edit_text("Выберите дату:", reply_markup=markup)
+    await callback.message.edit_text(
+        escape_md("Выберите дату:"), reply_markup=markup
+    )
     await callback.answer()
     await state.set_state(ViewSlots.choose_date)
 
@@ -43,14 +47,16 @@ async def view_date_chosen(
         slots = get_slots(bc, date_str)
         if not slots:
             await callback.message.answer(
-                "На этот день нет доступных слотов", reply_markup=MAIN_MENU
+                escape_md("На этот день нет доступных слотов"),
+                reply_markup=MAIN_MENU,
             )
             await state.clear()
             return
         times = [s[1] for s in slots]
         await state.update_data(date=date_str, slots={s[1]: s[2] for s in slots})
         await callback.message.answer(
-            "Доступные слоты:", reply_markup=slots_kb("viewtime", times)
+            escape_md("Доступные слоты:"),
+            reply_markup=slots_kb("viewtime", times),
         )
         await state.set_state(ViewSlots.choose_slot)
 
@@ -63,7 +69,7 @@ async def slot_selected(callback: CallbackQuery, state: FSMContext) -> None:
     bc = data["bc"]
     date = data["date"]
     await callback.message.edit_text(
-        f"Слот {time}\nСсылка: {link}",
+        escape_md(f"Слот {time}\nСсылка: {link}"),
         reply_markup=slot_actions_kb(bc, date, time),
     )
     await callback.answer()
@@ -73,7 +79,7 @@ async def slot_selected(callback: CallbackQuery, state: FSMContext) -> None:
 async def take_slot(callback: CallbackQuery) -> None:
     _, bc, date, time = callback.data.split(":", 3)
     remove_slot(bc, date, time)
-    await callback.message.edit_text("Слот забран")
+    await callback.message.edit_text(escape_md("Слот забран"))
     await callback.answer()
 
 
