@@ -6,7 +6,6 @@ MAIN_MENU = ReplyKeyboardMarkup(
         [KeyboardButton(text="Разместить слот")],
         [KeyboardButton(text="Доступные слоты")],
         [KeyboardButton(text="Мои слоты")],
-        [KeyboardButton(text="Удалить слот")],
     ],
     resize_keyboard=True,
 )
@@ -48,6 +47,20 @@ def slot_actions_kb(bc: str, date: str, time: str) -> InlineKeyboardMarkup:
                 InlineKeyboardButton(
                     text="Забрать",
                     callback_data=f"take:{bc}:{date}:{time}",
+                ),
+                InlineKeyboardButton(text="Отмена", callback_data="cancel"),
+            ]
+        ]
+    )
+
+
+def my_slot_actions_kb(bc: str, date: str, time: str) -> InlineKeyboardMarkup:
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(
+                    text="Удалить",
+                    callback_data=f"delmy:{bc}:{date}:{time}",
                 ),
                 InlineKeyboardButton(text="Отмена", callback_data="cancel"),
             ]
