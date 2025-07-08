@@ -1,6 +1,18 @@
 import asyncio
 import os
 
+
+def load_dotenv(path: str = ".env") -> None:
+    """Load environment variables from a simple .env file."""
+    if not os.path.exists(path):
+        return
+    with open(path) as f:
+        for line in f:
+            if line.startswith("#") or "=" not in line:
+                continue
+            key, value = line.strip().split("=", 1)
+            os.environ.setdefault(key, value)
+
 from aiogram import Bot, Dispatcher
 from aiogram.enums.parse_mode import ParseMode
 from aiogram.client.default import DefaultBotProperties
@@ -18,6 +30,7 @@ def register_handlers(dp: Dispatcher) -> None:
 
 
 async def main() -> None:
+    load_dotenv()
     token = os.getenv("BOT_TOKEN")
     if not token:
         raise RuntimeError("BOT_TOKEN is not set")
