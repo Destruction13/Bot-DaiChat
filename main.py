@@ -3,6 +3,7 @@ import os
 
 from aiogram import Bot, Dispatcher
 from aiogram.enums.parse_mode import ParseMode
+from aiogram.client.default import DefaultBotProperties
 
 from handlers import start, add_slot, view_slots, my_slots, delete_slot
 from storage.database import init_db
@@ -22,7 +23,7 @@ async def main() -> None:
         raise RuntimeError("BOT_TOKEN is not set")
 
     init_db()
-    bot = Bot(token, parse_mode=ParseMode.HTML)
+    bot = Bot(token, default=DefaultBotProperties(parse_mode=ParseMode.MARKDOWN_V2))
     dp = Dispatcher()
     register_handlers(dp)
 
