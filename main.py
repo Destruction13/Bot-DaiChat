@@ -20,7 +20,7 @@ from aiogram import Bot, Dispatcher
 from aiogram.enums.parse_mode import ParseMode
 from aiogram.client.default import DefaultBotProperties
 
-from handlers import start, add_slot, view_slots, my_slots, delete_slot
+from handlers import start, add_slot, view_slots, my_slots
 from storage.database import init_db
 
 
@@ -29,7 +29,6 @@ def register_handlers(dp: Dispatcher) -> None:
     dp.include_router(add_slot.router)
     dp.include_router(view_slots.router)
     dp.include_router(my_slots.router)
-    dp.include_router(delete_slot.router)
 
 
 async def main() -> None:
