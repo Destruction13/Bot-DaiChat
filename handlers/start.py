@@ -11,5 +11,6 @@ router = Router()
 async def cmd_start(message: Message) -> None:
     """Send welcome and show main menu."""
     await message.answer(
-        "Привет! Выберите действие:", reply_markup=MAIN_MENU
+        r"Привет\! Выберите действие:",
+        reply_markup=MAIN_MENU,
     )

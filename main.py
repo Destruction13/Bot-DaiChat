@@ -2,6 +2,9 @@ import asyncio
 import os
 
 
+BOT_TOKEN = "7845798275:AAG0OOzduEZste-tdt3WcUEkFw_LdXFpbHQ"
+
+
 def load_dotenv(path: str = ".env") -> None:
     """Load environment variables from a simple .env file."""
     if not os.path.exists(path):
@@ -31,9 +34,7 @@ def register_handlers(dp: Dispatcher) -> None:
 
 async def main() -> None:
     load_dotenv()
-    token = os.getenv("BOT_TOKEN")
-    if not token:
-        raise RuntimeError("BOT_TOKEN is not set")
+    token = BOT_TOKEN
 
     init_db()
     bot = Bot(token, default=DefaultBotProperties(parse_mode=ParseMode.MARKDOWN_V2))
