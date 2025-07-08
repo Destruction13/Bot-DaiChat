@@ -7,6 +7,7 @@ from keyboards.common import business_centers_kb, MAIN_MENU
 from states.my_slots import MySlots
 from storage.database import get_user_slots
 from utils.calendar import get_ru_calendar
+from utils import escape_md
 
 router = Router()
 
@@ -14,7 +15,10 @@ router = Router()
 @router.message(F.text == "Мои слоты")
 async def start_my_slots(message: Message, state: FSMContext) -> None:
     await state.set_state(MySlots.choose_bc)
-    await message.answer("Выберите бизнес-центр:", reply_markup=business_centers_kb("mybc"))
+    await message.answer(
+        escape_md("Выберите бизнес-центр:"),
+        reply_markup=business_centers_kb("mybc"),
+    )
 
 
 @router.callback_query(MySlots.choose_bc, F.data.startswith("mybc:"))
@@ -23,7 +27,9 @@ async def my_bc_chosen(callback: CallbackQuery, state: FSMContext) -> None:
     await state.update_data(bc=bc)
     cal = get_ru_calendar()
     markup = await cal.start_calendar()
-    await callback.message.edit_text("Выберите дату:", reply_markup=markup)
+    await callback.message.edit_text(
+        escape_md("Выберите дату:"), reply_markup=markup
+    )
     await callback.answer()
     await state.set_state(MySlots.choose_date)
 
@@ -41,9 +47,12 @@ async def my_date_chosen(
         slots = get_user_slots(callback.from_user.id, bc, date_str)
         if not slots:
             await callback.message.answer(
-                "У вас нет слотов на эту дату", reply_markup=MAIN_MENU
+                escape_md("У вас нет слотов на эту дату"),
+                reply_markup=MAIN_MENU,
             )
         else:
-            text = "\n".join(f"{t} — {link}" for t, link in slots)
+            text = "\n".join(
+                escape_md(f"{t} — {link}") for t, link in slots
+            )
             await callback.message.answer(text, reply_markup=MAIN_MENU)
         await state.clear()
