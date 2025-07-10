@@ -16,6 +16,7 @@ def load_dotenv(path: str = ".env") -> None:
 from aiogram import Bot, Dispatcher
 from aiogram.enums.parse_mode import ParseMode
 from aiogram.client.default import DefaultBotProperties
+from keep_alive import keep_alive
 
 from handlers import start, add_slot, view_slots, my_slots
 from storage.database import init_db
@@ -43,6 +44,7 @@ async def main() -> None:
 
 
 if __name__ == "__main__":
+    keep_alive()
     try:
         asyncio.run(main())
     except (KeyboardInterrupt, SystemExit):
